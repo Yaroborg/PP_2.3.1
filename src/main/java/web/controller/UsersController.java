@@ -5,20 +5,28 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import javax.validation.Valid;
 import web.model.User;
 import web.service.UserService;
 
 @Controller
 public class UsersController {
+
     private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
     private final UserService userService;
 
-    @Autowired
     public UsersController(UserService userService) {
         this.userService = userService;
     }
@@ -38,10 +46,14 @@ public class UsersController {
     }
 
     @PostMapping("/save")
-    public String saveUser(@ModelAttribute("user") User user) {
+    public String saveUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            logger.debug("Validation errors found while saving user: {}", bindingResult.getAllErrors());
+            return "info"; // Возвращаем страницу с формой для редактирования пользователя
+        }
         logger.debug("Request received to save user: {}", user);
         userService.save(user);
-        return "redirect:/";
+        return "redirect:/"; // Перенаправляем на главную страницу
     }
 
     @GetMapping(value = "/edit")
@@ -58,3 +70,4 @@ public class UsersController {
         return "redirect:/";
     }
 }
+

@@ -1,20 +1,25 @@
 package web.model;
 
 import jakarta.persistence.*;
+import javax.validation.constraints.*;
 
 import java.util.Objects;
 
 @Entity
 @Table(name = "users")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
-    @Column(name = "name")
+
+    @NotEmpty(message = "Name cannot be empty")
+    @Size(min = 2, max = 30, message = "Name must be between 2 and 30 characters")
+    @Pattern(regexp = "^[A-Za-z]+$", message = "Name must contain only letters")
     private String name;
-    @Column(name = "surname")
+
+    @NotEmpty(message = "Surname cannot be empty")
+    @Size(min = 2, max = 30, message = "Surname must be between 2 and 30 characters")
+    @Pattern(regexp = "^[A-Za-z]+$", message = "Surname must contain only letters")
     private String surname;
 
     public User() {
